@@ -6,6 +6,9 @@ import java.util.Objects;
 
 import com.vcore.BlackBoxCore;
 import com.vcore.app.BActivityThread;
+import com.vcore.core.system.user.BUserHandle;
+
+import black.android.os.UserHandle;
 
 public class MethodParameterUtils {
     public static <T> T getFirstParam(Object[] args, Class<T> tClass) {
@@ -120,6 +123,24 @@ public class MethodParameterUtils {
 
         if (clazz.getSuperclass() != Object.class) {
             getAllInterfaces(Objects.requireNonNull(clazz.getSuperclass()), interfaceCollection);
+        }
+    }
+
+    /**
+     * @note replaceLastUserId
+     */
+    public static void replaceLastUserId(Object[] args) {
+        if (BUserHandle.getUserId(BlackBoxCore.getHostUid()) == 0) {
+            return;
+        }
+        int pos = -1;
+        for (int i = 0; i < args.length; i++) {
+            if (args[i] instanceof Integer && args[i] == Integer.valueOf(0)) {
+                pos = i;
+            }
+        }
+        if (pos >= 0) {
+            args[pos] = BUserHandle.getUserId(BlackBoxCore.getHostUid());
         }
     }
 }
